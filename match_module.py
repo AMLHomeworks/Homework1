@@ -32,15 +32,16 @@ def find_best_match(model_images, query_images, dist_type, hist_type, num_bins):
     query_hists = compute_histograms(query_images, hist_type, hist_isgray, num_bins)
     
     D = np.zeros((len(query_images), len(model_images)))
-    
-    
-    #... (your code here)
-    best_match = np.zeros((len(query_images), 5))
+    best_match = np.zeros((len(query_images), len(model_images)))
 
     for i in range(len(query_images)):
         for j in range(len(model_images)):
             D[i, j] = dist_module.get_dist_by_name(query_hists[i], model_hists[j], dist_type)
-        best_match[i] = np.argpartition(D[i], 5)[:5]
+
+        best_match[i] = np.argsort(D[i])
+    #... (your code here)
+    best_match = best_match[:,0]
+    best_match = best_match.astype(int)
 
     return best_match, D
 
@@ -76,20 +77,29 @@ def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
 
 def show_neighbors(model_images, query_images, dist_type, hist_type, num_bins):
     
-    
     plt.figure()
 
     num_nearest = 5  # show the top-5 neighbors
-    
-    #... (your code here)
+
     [best_match, D] = find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
-    best_match = best_match.astype(int)
+
+    D = np.around(D,3)
+    matches = np.zeros((len(query_images), num_nearest))
+    for i in range(len(query_images)):
+        matches[i] = np.argsort(D[i])[:num_nearest]
+    matches = matches.astype(int)
 
     for i in range(len(query_images)):
         plt.subplot(i+1,6,1); plt.imshow(np.array(Image.open(query_images[i])), vmin=0, vmax=255)
-        plt.subplot(i+1,6,2); plt.imshow(np.array(Image.open(model_images[best_match[i][0]])), vmin=0, vmax=255)
-        plt.subplot(i+1,6,3); plt.imshow(np.array(Image.open(model_images[best_match[i][1]])), vmin=0, vmax=255)
-        plt.subplot(i+1,6,4); plt.imshow(np.array(Image.open(model_images[best_match[i][2]])), vmin=0, vmax=255)
-        plt.subplot(i+1,6,5); plt.imshow(np.array(Image.open(model_images[best_match[i][3]])), vmin=0, vmax=255)
-        plt.subplot(i+1,6,6); plt.imshow(np.array(Image.open(model_images[best_match[i][4]])), vmin=0, vmax=255)
+        plt.title(f'Q{i}')
+        plt.subplot(i+1,6,2); plt.imshow(np.array(Image.open(model_images[matches[i][0]])), vmin=0, vmax=255)
+        plt.title(f'M{D[i][matches[i][0]]}')
+        plt.subplot(i+1,6,3); plt.imshow(np.array(Image.open(model_images[matches[i][1]])), vmin=0, vmax=255)
+        plt.title(f'M{D[i][matches[i][1]]}')
+        plt.subplot(i+1,6,4); plt.imshow(np.array(Image.open(model_images[matches[i][2]])), vmin=0, vmax=255)
+        plt.title(f'M{D[i][matches[i][2]]}')
+        plt.subplot(i+1,6,5); plt.imshow(np.array(Image.open(model_images[matches[i][3]])), vmin=0, vmax=255)
+        plt.title(f'M{D[i][matches[i][3]]}')
+        plt.subplot(i+1,6,6); plt.imshow(np.array(Image.open(model_images[matches[i][4]])), vmin=0, vmax=255)
+        plt.title(f'M{D[i][matches[i][4]]}')
         plt.show()

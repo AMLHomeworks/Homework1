@@ -19,10 +19,10 @@ def rgb2gray(rgb):
 
 
 ## function gauss (Question 1.a)
-
+print('Question 1a')
 sigma = 4.0
 [Gx, x] = gauss_module.gauss(sigma)
-#print(Gx)
+print(Gx)
 
 #plt.figure(1)
 #plt.plot(x, Gx, '.-')
@@ -31,7 +31,7 @@ sigma = 4.0
 
 
 ## function gaussianfilter (Question 1.b)
-
+print('Question 1b')
 img = rgb2gray(np.array(Image.open('graf.png')))
 smooth_img = gauss_module.gaussianfilter(img, sigma)
 
@@ -47,7 +47,7 @@ plt.show()
 
 
 ## function gaussdx (Question 1.c)
-
+print('Question 1c')
 sigma = 4.0
 [Gx, x] = gauss_module.gauss(sigma)
 [Dx, x] = gauss_module.gaussdx(sigma)
@@ -61,7 +61,7 @@ plt.show()
 
 
 ## function gaussdx (Question 1.d)
-
+print('Question 1d')
 img_imp = np.zeros([27,27])
 img_imp[13, 13] = 1.0
 plt.figure(6), plt.imshow(img_imp, cmap='gray')
@@ -93,7 +93,7 @@ plt.show()
 
 
 ## function gaussderiv (Question 1.e)
-
+print('Question 1e')
 img_c = np.array(Image.open('graf.png')).astype('double')
 img = rgb2gray(img_c)
 [imgDx, imgDy] = gauss_module.gaussderiv(img, 7.0)

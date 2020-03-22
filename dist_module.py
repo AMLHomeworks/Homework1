@@ -18,9 +18,9 @@ def dist_intersect(x,y, normalized=False):
     sum_ = np.sum(np.minimum(x,y))
 
     if not normalized:
-        return 0.5*(sum_/np.sum(x) + sum_/np.sum(y))
+        return 1 - 0.5*(sum_/np.sum(x) + sum_/np.sum(y))
     else:
-        return sum_
+        return 1 - sum_
 
 
 
@@ -38,7 +38,6 @@ def dist_l2(x,y):
     distance = np.sum([(a-b)**2 for a, b in zip(x, y)])
 
     assert distance > 0, "Distance must be in the range [0,sqrt(2)]"
-    assert distance < np.sqrt(2), "Distance must be in the range [0,sqrt(2)]"
 
     return distance
 
@@ -62,7 +61,7 @@ def dist_chi2(x,y):
     chi2 = np.sum([((a-b)**2)/(a+b) for a, b in zip(x, y)])
 
     assert chi2 > 0, "chi square score must be in the range [0,Inf]"
-
+    
     return chi2
 
 

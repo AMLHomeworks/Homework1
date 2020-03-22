@@ -22,8 +22,6 @@ def normalized_hist(img_gray, num_bins, _range = (0,255)):
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
 
-
-    #... (your code here)
     arr = img_gray.ravel()
 
     def rounder(values):
@@ -43,8 +41,7 @@ def normalized_hist(img_gray, num_bins, _range = (0,255)):
         hists = arr[:num_bins]
 
     # normalize
-    hists = np.array([(x-min(hists))/(sum(hists)-min(hists)) for x in hists])
-
+    hists = hists/np.sum(hists)
 
     return hists, bins
 
@@ -62,47 +59,32 @@ def normalized_hist(img_gray, num_bins, _range = (0,255)):
 #       - their G values fall in bin 9
 #       - their B values fall in bin 5
 def rgb_hist(img_color_double, num_bins):
-    #assert len(img_color_double.shape) == 3, 'image dimension mismatch'
-    #assert img_color_double.dtype == 'float', 'incorrect image type'
+    assert len(img_color_double.shape) == 3, 'image dimension mismatch'
+    assert img_color_double.dtype == 'float', 'incorrect image type'
 
-
-    #... (your code here)
-    h, w, ch = img_color_double.shape
-    bin_size = 5
-
-    if isinstance(img_color_double, np.uint8):
-        max_range = 255
-    elif isinstance(img_color_double, np.uint16):
-        max_range = 65535
-    elif isinstance(img_color_double, np.float):
-        max_range = 1.0
-    else:
-        max_range = np.amax(img_color_double)
-
-    # generate indices and histogram
-    ranges = ([0, max_range], [0, max_range], [0, max_range])
-    bin_sizes = (bin_size, bin_size, bin_size)
-    hists = np.histogramdd(img_color_double.reshape((h*w, ch)), bins=bin_sizes, range=ranges)[0]
-
+    bin_size = 256/num_bins
     #Define a 3D histogram  with "num_bins^3" number of entries
-    #hists = np.zeros((num_bins, num_bins, num_bins))
+    hists = np.zeros((num_bins, num_bins, num_bins))
+
     
+    red = img_color_double[:,:,0].ravel()
+    green = img_color_double[:,:,1].ravel()
+    blue = img_color_double[:,:,2].ravel()
+
     # Loop for each pixel i in the image 
-    #for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
+    for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
         # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
-        
-        #... (your code here)
-        #pass
-
-
-    #Normalize the histogram such that its integral (sum) is equal 1
-    #... (your code here)
+        r = int(np.floor(red[i]/bin_size)) + 1
+        g = int(np.floor(green[i]/bin_size)) + 1
+        b = int(np.floor(blue[i]/bin_size)) + 1
+        hists[r-1,g-1,b-1] = hists[r-1,g-1,b-1] + 1
 
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
 
-    #normalize
-    hists = np.array([(x-min(hists))/(sum(hists)-min(hists)) for x in hists])  
+    #Normalize the histogram such that its integral (sum) is equal 1
+    #... (your code here)
+    hists = hists/np.sum(hists)
 
     return hists
 
@@ -119,36 +101,29 @@ def rgb_hist(img_color_double, num_bins):
 #       - their R values fall in bin 0
 #       - their G values fall in bin 9
 def rg_hist(img_color_double, num_bins):
-    #assert len(img_color_double.shape) == 3, 'image dimension mismatch'
-    #assert img_color_double.dtype == 'float', 'incorrect image type'
+    assert len(img_color_double.shape) == 3, 'image dimension mismatch'
+    assert img_color_double.dtype == 'float', 'incorrect image type'
 
 
-    #... (your code here)
-    h, w, ch = img_color_double.shape
-    bin_size = 5
-
-    if isinstance(img_color_double, np.uint8):
-        max_range = 255
-    elif isinstance(img_color_double, np.uint16):
-        max_range = 65535
-    elif isinstance(img_color_double, np.float):
-        max_range = 1.0
-    else:
-        max_range = np.amax(img_color_double)
-
+    bin_size = 256/num_bins
     #Define a 2D histogram  with "num_bins^2" number of entries
-    #hists = np.zeros((num_bins, num_bins))
-    ranges = ([0, max_range], [0, max_range])
-    bin_sizes = (bin_size, bin_size)
-    hists = np.histogramdd(img_color_double[:,:,:2].reshape((h*w, ch-1)), bins=bin_sizes, range=ranges)[0]  
-    
-    #... (your code here)
+    hists = np.zeros((num_bins, num_bins))
 
+    red = img_color_double[:,:,0].ravel()
+    green = img_color_double[:,:,1].ravel()
+
+    # Loop for each pixel i in the image
+    for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
+        # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
+        r = int(np.floor(red[i]/bin_size)) + 1
+        g = int(np.floor(green[i]/bin_size)) + 1
+        hists[r-1,g-1] = hists[r-1,g-1] + 1
 
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
-    # normalize
-    hists = np.array([(x-min(hists))/(sum(hists)-min(hists)) for x in hists])  
+
+    #Normalize
+    hists = hists/np.sum(hists)
 
     return hists
 
@@ -167,16 +142,22 @@ def dxdy_hist(img_gray, num_bins):
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
 
-
-    #... (your code here)
-
-
+    bin_size = 256/num_bins
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
 
+    [imgDx, imgDy] = gauss_module.gaussderiv(img_gray, 3.0)
 
-    #... (your code here)
+    imgDx = 12*(imgDx-np.min(imgDx))/(np.max(imgDx)-np.min(imgDx)) - 6
+    imgDy = 12*(imgDy-np.min(imgDy))/(np.max(imgDy)-np.min(imgDy)) - 6
 
+    imgDx = imgDx.ravel()
+    imgDy = imgDy.ravel()
+    
+    for i in range(img_gray.shape[0]*img_gray.shape[1]):
+        x = int(np.floor(imgDx[i]/bin_size)) + 1
+        y = int(np.floor(imgDy[i]/bin_size)) + 1
+        hists[x-1,y-1] = hists[x-1,y-1] + 1
 
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)

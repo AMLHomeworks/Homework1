@@ -80,7 +80,7 @@ plt.imshow(img_color)
 num_bins_dxdy = 10
 plt.subplot(1,2,2)
 hist_dxdy = histogram_module.dxdy_hist(img_gray, num_bins_dxdy)
-plt.bar(np.array(range(1,hist_dxdy.size+1)),hist_dxdy)
+plt.bar(np.array(range(1,hist_dxdy.size+1)),hist_dxdy, 5)
 plt.show()
 
 
@@ -99,7 +99,7 @@ plt.show()
 
 img1_color = np.array(Image.open(image_files1[0]))
 img2_color = np.array(Image.open(image_files2[0]))
-num_bins_color = 20
+num_bins_color = 30
 hist1_rgb = histogram_module.rgb_hist(img1_color.astype('double'), num_bins_color)
 hist2_rgb = histogram_module.rgb_hist(img2_color.astype('double'), num_bins_color)
 
@@ -164,7 +164,7 @@ print('%s-%s, %s-%s, %s-%s, %s-%s'%('chi2', 'grayvalue', 'chi2', 'rgb', 'chi2', 
 
 
 ## Find best match (Question 3.a)
-
+print('Question 3a')
 with open('model.txt') as fp:
     model_images = fp.readlines()
 model_images = [x.strip() for x in model_images] 
@@ -181,13 +181,16 @@ num_bins = 30;
 
 
 
+
 ## visualize nearest neighbors (Question 3.b)
+print('Question 3b')
 query_images_vis = [query_images[i] for i in np.array([0,4,9])]
 match_module.show_neighbors(model_images, query_images_vis, dist_type, hist_type, num_bins)
 
 
 
 ## compute recognition percentage (Question 3.c)
+print('Question 3c')
 # import ipdb; ipdb.set_trace()
 num_correct = sum( best_match == range(len(query_images)) )
 print('number of correct matches: %d (%f)\n'% (num_correct, 1.0 * num_correct / len(query_images)))

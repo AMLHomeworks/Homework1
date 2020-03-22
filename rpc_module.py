@@ -18,38 +18,38 @@ def plot_rpc(D, plot_color):
     recall = []
     precision = []
     num_queries = D.shape[1]
-    
+
     num_images = D.shape[0]
     assert(num_images == num_queries), 'Distance matrix should be a squatrix'
-    
+
     labels = np.diag([1]*num_images)
       
-    d = D.reshape(D.size)
-    l = labels.reshape(labels.size)
-     
+    d = D.reshape(D.size)  ## flatten score matrix
+    l = labels.reshape(labels.size)  ## flatten true label
+      
     sortidx = d.argsort()
-    d = d[sortidx]
-    l = l[sortidx]
-    
+    d = d[sortidx]      ## sort score matrix 
+    l = l[sortidx]      ## sort label according to score matrix 
+
     tp = 0
-    #... (your code here
     fp = 0
     fn = 0
+    x = (l==0).astype(bool)
 
     for idt in range(len(d)):
         tp += l[idt]
+        fp = num_queries - tp
+        fn += x[idt]
+
         #... (your code here)
-        fp += l[idt]
-        fn += l[idt]
+
+        precision.append(tp/(tp+fn))
+        recall.append(tp/(tp+fp))
         
         #Compute precision and recall values and append them to "recall" and "precision" vectors
         #... (your code here)
-        prec = tp/tp+fp
-        rec = tp/tp+fn 
-        
-        precision.append(prec)
-        recall.append(recall)
-        
+
+    plt.plot([1-precision[i] for i in range(len(precision))], recall, plot_color+'-')
     plt.plot([1-precision[i] for i in range(len(precision))], recall, plot_color+'-')
 
 
